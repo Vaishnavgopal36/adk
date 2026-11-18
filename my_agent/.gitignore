@@ -1,2 +1,6 @@
 .env
 .adk/
+
+# Local task data; recreated by database initialization.
+data/*.db
+data/*.db-*

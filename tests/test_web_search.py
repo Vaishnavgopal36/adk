@@ -86,8 +86,11 @@ class WebSearchTests(unittest.IsolatedAsyncioTestCase):
 
     def test_adk_tool_schema(self):
         declaration = FunctionTool(func=web_search)._get_declaration()
+        assert declaration is not None
         self.assertEqual(declaration.name, "web_search")
-        self.assertIn("query", declaration.parameters_json_schema["properties"])
+        schema = declaration.parameters_json_schema
+        assert schema is not None
+        self.assertIn("query", schema["properties"])
 
 
 if __name__ == "__main__":

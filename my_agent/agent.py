@@ -1,6 +1,6 @@
 from google.adk.agents import Agent, BaseAgent
 
-from .tools import web_search
+from .tools import create_task, web_search
 
 MODEL = "gemini-3.5-flash-lite"
 
@@ -24,11 +24,6 @@ AGENT_CONFIGS = {
         "Focus on identifying bugs and explaining how to diagnose them.",
     ),
 }
-
-
-def calculate_area(length: float, width: float) -> float:
-    """Calculate the area of a rectangle."""
-    return length * width
 
 
 # Create the four specialist tutors from the configurations.
@@ -64,8 +59,15 @@ experimental_agents: list[BaseAgent] = [
         claims supported only by snippets; do not present them as verified
         full-page findings or claim to have read full pages.
         If search fails, say so and do not invent sources.
+        Use create_task only when the user requests a task in Notion.
+        Ask for a title if the intended task is unclear. Do not invent due dates
+        or priorities. Convert relative dates only with a known current date;
+        otherwise ask for an explicit date. Never send credentials as tool arguments.
+        Only report creation after status success, including the returned task link.
+        For error or unknown status, explain the result. Do not automatically retry
+        an unknown write or create the same requested task again.
         """,
-        tools=[web_search, calculate_area] if name == "direct_tutor" else [web_search],
+        tools=[web_search, create_task],
     )
     for name, (description, instruction) in AGENT_CONFIGS.items()
 ]
